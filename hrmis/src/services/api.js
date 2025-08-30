@@ -1,14 +1,11 @@
-// src/api/axios.js
+
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://hrmis-api.devfamz.com/api',  // ✅ Base URL (without /api/auth/login)
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: 'https://hrmis-api.devfamz.com/api',
 });
 
-// Har request ke sath token automatically jaye
+// Har request ke sath token bhejo agar available ho
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
