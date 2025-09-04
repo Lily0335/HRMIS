@@ -1,7 +1,10 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "https://hrmis-api.devamz.com/api", 
+const API = axios.create({
+  baseURL: "https://hrmis-api.devfamz.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-export default api;
+export default API;

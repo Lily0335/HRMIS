@@ -1,51 +1,59 @@
-import React, { useState } from "react";
-import api from "../api/axios";
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+import { useState } from "react";
+import API from "../api/axios"
+export default function Login() {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [message, setMessage] = useState("");
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      // Swagger ke hisaab se endpoint call
-      const response = await api.post("/auth/login", { email, password });
-
-      // JWT Token save karna (Swagger me "access_token" aata hai)
-      localStorage.setItem("token", response.data.access_token);
-
-      alert("Login successful!");
-      window.location.href = "/dashboard"; // redirect after login
-    } catch (err) {
-      setError("Invalid credentials. Please try again.");
-    }
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await API.post("/auth/login", form);
+    console.log("Login Response:", res.data);
+
+    if (res.data?.access_token) {
+      localStorage.setItem("token", res.data.access_token);
+      setMessage("✅ Login successful!");
+    } else {
+      setMessage("⚠️ No token received.");
+    }
+  } catch (err) {
+    console.error("Login Error:", err.response || err.message);
+    setMessage(
+      "❌ Login failed: " +
+        (err.response?.data?.error || err.message)
+    );
+  }
+};
+
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>HRMIS Login</h2>
-      <form onSubmit={handleLogin}>
+    <div className="login-container">
+      <form className="login-box" onSubmit={handleLogin}>
+        <h2>Login</h2>
         <input
           type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        /><br /><br />
-
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
         <input
           type="password"
-          placeholder="Enter Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        /><br /><br />
-
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
         <button type="submit">Login</button>
+        {message && <p className="message">{message}</p>}
       </form>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
-
-export default Login;
