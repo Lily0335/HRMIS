@@ -3,15 +3,21 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 
 function App() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token"); // ✅ token check
 
   return (
     <Router>
       <Routes>
-        {/* Default → agar token hai to Dashboard, warna Login */}
+        {/* Agar login hua hai to direct dashboard pe le jao */}
         <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Login />} />
+
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
+
+        {/* Protected Route */}
+        <Route
+          path="/dashboard"
+          element={token ? <Dashboard /> : <Navigate to="/login" />}
+        />
       </Routes>
     </Router>
   );
