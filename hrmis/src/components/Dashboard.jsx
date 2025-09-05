@@ -4,13 +4,16 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faUsers, faCalendar, faClipboardList, faMoneyCheck, faChartBar, faCog, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import logoImg from "../assets/logo.png";
+import Employees from "./Employees";
+import Attendance from "./Attendance";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard"); // new: track which tab is active
   const [stats, setStats] = useState({
     totalEmployees: 0,
     pendingLeaves: 0,
@@ -24,26 +27,26 @@ export default function Dashboard() {
   };
 
   const menuItems = [
-    { icon: faHome, label: "Dashboard" },
-    { icon: faUsers, label: "Employees" },
-    { icon: faCalendar, label: "Attendance" },
-    { icon: faClipboardList, label: "Leave Requests" },
-    { icon: faMoneyCheck, label: "Payroll" },
-    { icon: faChartBar, label: "Reports" },
-    { icon: faCog, label: "Settings" },
+    { icon: faHome, label: "Dashboard", key: "dashboard" },
+    { icon: faUsers, label: "Employees", key: "employees" },
+    { icon: faCalendar, label: "Attendance", key: "attendance" },
+    { icon: faClipboardList, label: "Leave Requests", key: "leaves" },
+    { icon: faMoneyCheck, label: "Payroll", key: "payroll" },
+    { icon: faChartBar, label: "Reports", key: "reports" },
+    { icon: faCog, label: "Settings", key: "settings" },
   ];
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const resEmployees = await API.get("/users"); // total employees
-        const resLeaves = await API.get("/leaves/user/1/pending"); // pending leaves
-        const resTasks = await API.get("/tasks"); // completed tasks
+        const resEmployees = await API.get("/users"); 
+        const resLeaves = await API.get("/leaves/user/1/pending"); 
+        const resTasks = await API.get("/tasks"); 
         setStats({
           totalEmployees: resEmployees.data.length,
           pendingLeaves: resLeaves.data.length,
           completedTasks: resTasks.data.filter(t => t.status === "completed").length,
-          payrollAmount: 500000, // static example
+          payrollAmount: 500000,
         });
       } catch (err) {
         console.error(err);
@@ -66,9 +69,7 @@ export default function Dashboard() {
           <img src={logoImg} alt="Logo" className="logo-img" />
           <h1 className="header-title">HRMIS</h1>
         </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </header>
 
       {/* Sidebar */}
@@ -78,7 +79,11 @@ export default function Dashboard() {
         </button>
         <ul className="menu-list">
           {menuItems.map((item, index) => (
-            <li key={index} className="menu-item">
+            <li
+              key={index}
+              className={`menu-item ${activeTab === item.key ? "active" : ""}`}
+              onClick={() => setActiveTab(item.key)}
+            >
               <FontAwesomeIcon icon={item.icon} className="menu-icon" />
               {!collapsed && <span className="menu-label">{item.label}</span>}
             </li>
@@ -88,57 +93,62 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className={`main-content ${collapsed ? "sidebar-collapsed" : ""}`}>
-        {/* Admin Card */}
-        <div className="admin-card">
-          <h2>Hello, Admin</h2>
-          <p>Welcome back!</p>
-        </div>
+        {activeTab === "dashboard" && (
+          <>
+            <div className="admin-card">
+              <h2>Hello, Admin</h2>
+              <p>Welcome back!</p>
+            </div>
 
-        {/* Stats Cards */}
-        <div className="cards">
-          <div className="card">
-            <h3>Total Employees</h3>
-            <p>{stats.totalEmployees}</p>
-          </div>
-          <div className="card">
-            <h3>Pending Leaves</h3>
-            <p>{stats.pendingLeaves}</p>
-          </div>
-          <div className="card">
-            <h3>Completed Tasks</h3>
-            <p>{stats.completedTasks}</p>
-          </div>
-          <div className="card">
-            <h3>Payroll Amount</h3>
-            <p>${stats.payrollAmount}</p>
-          </div>
-        </div>
+            <div className="cards">
+              <div className="card">
+                <h3>Total Employees</h3>
+                <p>{stats.totalEmployees}</p>
+              </div>
+              <div className="card">
+                <h3>Pending Leaves</h3>
+                <p>{stats.pendingLeaves}</p>
+              </div>
+              <div className="card">
+                <h3>Completed Tasks</h3>
+                <p>{stats.completedTasks}</p>
+              </div>
+              <div className="card">
+                <h3>Payroll Amount</h3>
+                <p>${stats.payrollAmount}</p>
+              </div>
+            </div>
 
-        {/* Charts */}
-        <div className="charts">
-          <div className="chart-container">
-            <h3>Tasks & Leaves</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+            <div className="charts">
+              <div className="chart-container">
+                <h3>Tasks & Leaves</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+               </div>
+            </div>
+          </>
+         )}
+
+        {activeTab === "employees" && <Employees />}
+        {activeTab === "attendance" && <Attendance />}
       </main>
     </div>
   );
-}
+ }
+
