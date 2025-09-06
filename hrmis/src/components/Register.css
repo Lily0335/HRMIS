@@ -1,0 +1,103 @@
+/* Outer container */
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2f7, #f9fafc);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 1rem;
+}
+
+/* Form box */
+.register-box {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 480px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Title */
+.register-box h2 {
+  text-align: center;
+  margin-bottom: 1.8rem;
+  font-size: 1.9rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Input fields */
+.register-box input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.register-box input:focus {
+  border-color: #4f46e5;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* Submit button */
+.register-box button {
+  width: 100%;
+  background: #4f46e5;
+  color: #fff;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.register-box button:hover {
+  background: #4338ca;
+}
+
+/* Message */
+.message {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.message:empty {
+  display: none;
+}
+
+.message:contains("✅") {
+  background: #e6ffed;
+  color: #065f46;
+  border: 1px solid #34d399;
+}
+
+.message:contains("❌"),
+.message:contains("⚠️") {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
