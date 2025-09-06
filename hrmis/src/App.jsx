@@ -62,10 +62,8 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Employees page */}
-        <Route
-          path="/employees"
-          element={token ? <Employees /> : <Navigate to="/login" />}
-        />
+
+        <Route path="/employees" element={<Employees />} />
 
         {/* Dashboard page */}
         <Route

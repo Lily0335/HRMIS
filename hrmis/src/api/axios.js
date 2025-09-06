@@ -22,7 +22,7 @@ const API = axios.create({
   baseURL: "https://hrmis-api.devfamz.com/api",
 });
 
-// ✅ Token har request ke sath bhejna
+// ✅ Automatically attach token with every request
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
