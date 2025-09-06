@@ -51,7 +51,7 @@
 // src/components/Employees.js
 // src/components/Employees.js
 import { useEffect, useState } from "react";
-import API from "../api/axios";
+import { getAllUsers } from "../services/userService"; // ✅ service import
 import "./Employees.css";
 
 export default function Employees() {
@@ -62,63 +62,52 @@ export default function Employees() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        setLoading(true);
-        setError("");
-
-        const res = await API.get("/users"); // ✅ Swagger ke mutabiq
-        console.log("Employees Response:", res.data);
-
-        // Kabhi kabhi API array return karti hai ya object with data field
-        if (Array.isArray(res.data)) {
-          setEmployees(res.data);
-        } else if (res.data?.data) {
-          setEmployees(res.data.data);
-        } else {
-          setError("⚠️ Unexpected response format");
-        }
+        const res = await getAllUsers();
+        setEmployees(res.data); // ✅ backend se data
       } catch (err) {
-        console.error("Employees API Error:", err.response || err.message);
-        setError(
-          err.response?.data?.message ||
-            err.response?.data?.error ||
-            "❌ Failed to load employees"
-        );
+        console.error("Error fetching employees:", err);
+        setError("Failed to load employees");
       } finally {
         setLoading(false);
       }
     };
-
     fetchEmployees();
   }, []);
 
-  if (loading) return <p>⏳ Loading employees...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className="loading">Loading employees...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
-    <div className="table-container">
+    <div className="employees-container">
       <h2>Employees</h2>
-      {employees.length === 0 ? (
-        <p>No employees found.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Email</th>
-              <th>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.map((emp) => (
+      <table className="employees-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          {employees.length > 0 ? (
+            employees.map((emp) => (
               <tr key={emp.id}>
-                <td>{emp.id}</td>
+                <td>{emp.name}</td>
                 <td>{emp.email}</td>
-                <td>{emp.role}</td>
+                <td>{emp.department}</td>
+                <td>{emp.designation}</td>
+                <td>{emp.phone}</td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5">No employees found</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

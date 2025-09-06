@@ -1,47 +1,55 @@
 .employees-container {
-  padding: 20px;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.page-title {
+.employees-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
   font-size: 22px;
   font-weight: bold;
-  margin-bottom: 20px;
+  color: #2c3e50;
 }
 
 .employees-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
 }
 
 .employees-table th,
 .employees-table td {
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.employees-table th {
-  background: #f5f6fa;
-  font-weight: 600;
-  color: #333;
-}
-
-.employees-table tr:hover {
-  background: #f9f9f9;
-}
-
-.loading-text,
-.error-text {
-  font-size: 16px;
-  padding: 20px;
+  border: 1px solid #ddd;
+  padding: 12px;
   text-align: center;
 }
 
-.error-text {
-  color: #e74c3c;
-  font-weight: bold;
+.employees-table th {
+  background-color: #3498db;
+  color: white;
+  font-weight: 600;
+}
+
+.employees-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.employees-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #2980b9;
+}
+
+.error {
+  text-align: center;
+  font-size: 18px;
+  color: red;
 }
