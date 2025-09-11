@@ -195,12 +195,15 @@
 //     </div>
 //   );
 // }
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import { useStats } from "../context/StatsContext"; // ⬅️ IMPORT CONTEXT
+import { useStats } from "../context/StatsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHome, faUsers, faCalendar, faClipboardList, faChartBar, faCog, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHome, faUsers, faCalendar, faClipboardList,
+  faChartBar, faCog, faChevronLeft, faChevronRight
+} from "@fortawesome/free-solid-svg-icons";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import logoImg from "../assets/logo.png";
 import "./Dashboard.css";
@@ -209,10 +212,12 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [profile, setProfile] = useState({});
-  const { stats, setStats } = useStats(); // ⬅️ USE CONTEXT
+  const { stats, setStats } = useStats();
+  const [role, setRole] = useState("");   // track role
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/login");
   };
 
@@ -220,7 +225,10 @@ export default function Dashboard() {
     { icon: faHome, label: "Dashboard", path: "/dashboard" },
     { icon: faUsers, label: "Employees", path: "/employees" },
     { icon: faCalendar, label: "Leaves", path: "/leaves" },
-    { icon: faClipboardList, label: "Tasks", path: "/tasks" },
+    // ✅ Tasks only visible for Admin/Manager
+    ...(role === "admin" || role === "manager"
+      ? [{ icon: faClipboardList, label: "Tasks", path: "/tasks" }]
+      : []),
     { icon: faChartBar, label: "Reports", path: "/reports" },
     { icon: faCog, label: "Settings", path: "/settings" },
     { icon: faUsers, label: "Register User", path: "/register" },
@@ -229,17 +237,26 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resUsers = await API.get("/users");
+        // ✅ Get profile and role
         const resProfile = await API.get("/users/profile");
+        setProfile(resProfile.data);
+        setRole(resProfile.data.role || localStorage.getItem("role"));
+
         const userId = resProfile.data.id;
 
+        const resUsers = await API.get("/users");
         const resLeavesPending = await API.get(`/leaves/user/${userId}/pending`);
         const resLeavesApproved = await API.get(`/leaves/user/${userId}/approved`);
         const resLeavesRejected = await API.get(`/leaves/user/${userId}/rejected`);
 
-        const resTasks = await API.get("/tasks");
-        const completedTasks = resTasks.data.filter((t) => t.status === "completed").length;
-        const pendingTasks = resTasks.data.filter((t) => t.status !== "completed").length;
+        // ✅ Fetch tasks only for Admin/Manager
+        let completedTasks = 0;
+        let pendingTasks = 0;
+        if (resProfile.data.role === "admin" || resProfile.data.role === "manager") {
+          const resTasks = await API.get("/tasks");
+          completedTasks = resTasks.data.filter((t) => t.status === "completed").length;
+          pendingTasks = resTasks.data.filter((t) => t.status !== "completed").length;
+        }
 
         setStats({
           totalEmployees: resUsers.data.length,
@@ -249,8 +266,6 @@ export default function Dashboard() {
           completedTasks,
           pendingTasks,
         });
-
-        setProfile(resProfile.data);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
       }
@@ -260,9 +275,9 @@ export default function Dashboard() {
   }, [setStats]);
 
   const pieData = [
-    { name: "Completed Tasks", value: stats.completedTasks },
-    { name: "Pending Tasks", value: stats.pendingTasks },
-    { name: "Pending Leaves", value: stats.pendingLeaves },
+    { name: "Completed Tasks", value: stats.completedTasks || 0 },
+    { name: "Pending Tasks", value: stats.pendingTasks || 0 },
+    { name: "Pending Leaves", value: stats.pendingLeaves || 0 },
   ];
 
   const COLORS = ["#1abc9c", "#f39c12", "#e74c3c"];
@@ -275,9 +290,7 @@ export default function Dashboard() {
           <img src={logoImg} alt="Logo" className="logo-img" />
           <h1 className="header-title">HRMIS</h1>
         </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </header>
 
       {/* SIDEBAR */}
@@ -308,26 +321,32 @@ export default function Dashboard() {
           <div className="card"><h3>Pending Leaves</h3><p>{stats.pendingLeaves}</p></div>
           <div className="card"><h3>Approved Leaves</h3><p>{stats.approvedLeaves}</p></div>
           <div className="card"><h3>Rejected Leaves</h3><p>{stats.rejectedLeaves}</p></div>
-          <div className="card"><h3>Completed Tasks</h3><p>{stats.completedTasks}</p></div>
-          <div className="card"><h3>Pending Tasks</h3><p>{stats.pendingTasks}</p></div>
+          {(role === "admin" || role === "manager") && (
+            <>
+              <div className="card"><h3>Completed Tasks</h3><p>{stats.completedTasks}</p></div>
+              <div className="card"><h3>Pending Tasks</h3><p>{stats.pendingTasks}</p></div>
+            </>
+          )}
         </div>
 
         {/* PIE CHART */}
-        <div className="charts">
-          <div className="chart-container">
-            <h3>Overview</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+        {(role === "admin" || role === "manager") && (
+          <div className="charts">
+            <div className="chart-container">
+              <h3>Overview</h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
