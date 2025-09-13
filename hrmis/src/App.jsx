@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,11 +6,11 @@ import {
 } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import LeaveManagement from "./components/LeaveManagement.jsx";
-
+import TaskManagement from "./components/TaskManagement.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 function App() {
-  const token = localStorage.getItem("token"); 
+  const token = localStorage.getItem("token");
 
   return (
     <Router>
@@ -23,16 +22,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/leaves" element={<LeaveManagement />} />
- <Route
-              path="/task-management"
-              element={
-                userRole === "admin" || userRole === "manager" ? (
-                  <TaskManagement userRole={userRole} />
-                ) : (
-                  <Navigate to="/dashboard" replace />
-                )
-              }
-            />
+        <Route path="/tasks" element={<TaskManagement />} />
         <Route
           path="/dashboard"
           element={token ? <Dashboard /> : <Navigate to="/login" />}
@@ -43,4 +33,3 @@ function App() {
 }
 
 export default App;
-

@@ -22,7 +22,7 @@ export default function Login() {
       const token = res.data.access_token;
       if (token) {
         localStorage.setItem("token", token);
-
+        console.log("Saved token:", token);
         setTimeout(() => navigate("/dashboard"), 500);
       } else setMessage("⚠️ No token received");
     } catch (err) {
