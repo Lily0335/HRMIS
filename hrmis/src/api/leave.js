@@ -1,6 +1,4 @@
-import API from "./axios"; // Axios instance with baseURL & JWT already set
-
-// Fetch all leave requests
+import API from "./axios";
 export const fetchLeaves = async () => {
   try {
     const response = await API.get("/leaves");
@@ -20,7 +18,6 @@ export const createLeave = async (leaveData) => {
   }
 };
 
-// Fetch a specific leave request by ID
 export const fetchLeaveById = async (id) => {
   try {
     const response = await API.get(`/leaves/${id}`);
@@ -30,7 +27,6 @@ export const fetchLeaveById = async (id) => {
   }
 };
 
-// Update an existing leave request
 export const updateLeave = async (id, leaveData) => {
   try {
     const response = await API.put(`/leaves/${id}`, leaveData);
@@ -39,8 +35,6 @@ export const updateLeave = async (id, leaveData) => {
     throw new Error(error.response?.data?.message || "Failed to update leave request");
   }
 };
-
-// Delete a leave request
 export const deleteLeave = async (id) => {
   try {
     const response = await API.delete(`/leaves/${id}`);
@@ -49,8 +43,6 @@ export const deleteLeave = async (id) => {
     throw new Error(error.response?.data?.message || "Failed to delete leave request");
   }
 };
-
-// Fetch leaves by user ID
 export const fetchLeavesByUserId = async (userId) => {
   try {
     const response = await API.get(`/leaves/user/${userId}`);
@@ -59,8 +51,6 @@ export const fetchLeavesByUserId = async (userId) => {
     throw new Error(error.response?.data?.message || "Failed to fetch user leaves");
   }
 };
-
-// Fetch pending leaves by user ID
 export const fetchPendingLeavesByUserId = async (userId) => {
   try {
     const response = await API.get(`/leaves/user/${userId}/pending`);
@@ -69,8 +59,6 @@ export const fetchPendingLeavesByUserId = async (userId) => {
     throw new Error(error.response?.data?.message || "Failed to fetch pending leaves");
   }
 };
-
-// Fetch approved leaves by user ID
 export const fetchApprovedLeavesByUserId = async (userId) => {
   try {
     const response = await API.get(`/leaves/user/${userId}/approved`);
@@ -79,8 +67,6 @@ export const fetchApprovedLeavesByUserId = async (userId) => {
     throw new Error(error.response?.data?.message || "Failed to fetch approved leaves");
   }
 };
-
-// Fetch rejected leaves by user ID
 export const fetchRejectedLeavesByUserId = async (userId) => {
   try {
     const response = await API.get(`/leaves/user/${userId}/rejected`);
