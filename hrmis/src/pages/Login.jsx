@@ -39,7 +39,6 @@ export default function Login() {
 
   return (
     <>
-      {/* ✅ Shared Header */}
       <Header />
 
       <div className="login-container">

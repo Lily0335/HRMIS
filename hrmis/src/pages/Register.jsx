@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api/auth";
-import "./Register.css"; // Optional for styling
+import "./Register.css"; 
 
 export default function Register() {
   const navigate = useNavigate();
@@ -30,8 +30,6 @@ export default function Register() {
 
     try {
       const res = await registerUser(formData);
-
-      // Save the token and redirect
       localStorage.setItem("token", res.access_token);
       setSuccess(res.message || "Registration successful!");
       setTimeout(() => navigate("/dashboard"), 1000);

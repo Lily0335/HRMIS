@@ -11,8 +11,6 @@ import Dashboard from "./pages/Dashboard.jsx";
 import LeaveManagement from "./components/LeaveManagement.jsx";
 import TaskManagement from "./components/TaskManagement.jsx";
 import UserManagement from "./components/UserManagment.jsx";
-
-// PrivateRoute component to protect routes
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" replace />;
@@ -22,10 +20,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Default route */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-
-        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route
           path="/register"
@@ -35,15 +30,11 @@ function App() {
             </Layout>
           }
         />
-
-        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
-            <PrivateRoute>
-              
-                <Dashboard />
-              
+            <PrivateRoute>          
+                <Dashboard />           
             </PrivateRoute>
           }
         />
