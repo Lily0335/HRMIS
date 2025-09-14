@@ -1,112 +1,235 @@
+/* 🌟 General Layout */
 .user-management {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 2rem auto;
-  background: #ffffff;
   padding: 2rem;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease-in-out;
 }
 
 .user-management h2 {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #2c3e50;
-  font-size: 1.8rem;
-}
-
-.user-form {
-  display: grid;
-  gap: 1rem;
   margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #2c3e50;
+  letter-spacing: 0.5px;
 }
 
-.user-form input,
-.user-form select {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.form-buttons {
-  display: flex;
-  gap: 0.8rem;
-  justify-content: flex-end;
-}
-
-.add {
-  background-color: #3498db;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.update {
-  background-color: #2ecc71;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.cancel {
-  background-color: #e74c3c;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.user-list {
-  list-style: none;
-  padding: 0;
-}
-
-.user-list li {
-  background: #f9f9f9;
-  padding: 1rem;
+/* 🌟 Error Styling */
+.error {
+  background: #ffe8e6;
+  color: #c0392b;
+  border: 1px solid #e74c3c;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
-.user-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
+/* 🌟 Search Section */
+.user-management input[type="email"] {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  margin-right: 0.5rem;
+  width: 240px;
+  font-size: 0.95rem;
+  transition: all 0.25s ease-in-out;
 }
 
-.user-details p {
-  margin: 0.3rem 0;
+.user-management input[type="email"]:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 6px rgba(52, 152, 219, 0.35);
+  outline: none;
 }
 
-.actions {
-  display: flex;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-}
-
-.actions button {
+.user-management button {
   background: #3498db;
   color: #fff;
   border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.25s ease-in-out;
 }
 
-.actions button:hover {
+.user-management button:hover {
   background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(41, 128, 185, 0.3);
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .user-header {
-    flex-direction: column;
+/* 🌟 Search Result */
+.search-result {
+  margin-top: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* 🌟 Form Styling */
+.user-management form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.user-management form input,
+.user-management form select {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+}
+
+.user-management form input:focus,
+.user-management form select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+  outline: none;
+}
+
+.user-management form button {
+  grid-column: 1 / -1;
+  justify-self: center;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  background: #2ecc71;
+  color: #fff;
+  transition: all 0.25s ease-in-out;
+}
+
+.user-management form button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+/* 🌟 Table Styling */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.user-table th,
+.user-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eaeaea;
+  text-align: left;
+  color: #2c3e50;
+}
+
+.user-table th {
+  background-color: #f4f6f7;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-table tbody tr:hover {
+  background-color: #f9fbfc;
+  transition: background 0.25s ease-in-out;
+}
+
+/* ✨ Action Buttons in a Row */
+/* ✨ Action Buttons in a Single Row */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;       /* space between buttons */
+  flex-wrap: nowrap;  /* prevent stacking */
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* ✨ Edit & Delete Buttons */
+.user-table button {
+  flex-shrink: 1;        /* allow buttons to shrink on small screens */
+  white-space: nowrap;   /* prevent text from wrapping */
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease-in-out;
+}
+
+/* 🖊️ Edit Button */
+.user-table button.edit-btn {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(243, 156, 18, 0.3);
+}
+.user-table button.edit-btn:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4);
+}
+
+/* 🗑️ Delete Button */
+.user-table button.delete-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+}
+.user-table button.delete-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #96281b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(192, 57, 43, 0.4);
+}
+
+/* Mobile Adjustment */
+@media (max-width: 480px) {
+  .action-buttons {
     gap: 0.3rem;
+    flex-wrap: nowrap;   /* enforce single row */
+  }
+
+  .user-table button {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+
+
+  .action-buttons {
+    flex-wrap: wrap; /* allows wrapping if needed */
+    justify-content: flex-start;
+  }
+
+  .user-table button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
   }
 }
+
+@media (max-width: 480px) {
+  .user-management form {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    justify-content: flex-start;
+    gap: 0.3rem;
+  }
+
+  .user-table button {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+

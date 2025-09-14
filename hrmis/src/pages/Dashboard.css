@@ -180,3 +180,12 @@
     padding-top: 80px;
   }
 }
+
+.refresh-btn {
+  background-color: #3498db;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

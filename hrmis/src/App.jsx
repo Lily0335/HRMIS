@@ -7,8 +7,9 @@ import {
 import Login from "./pages/Login.jsx";
 import LeaveManagement from "./components/LeaveManagement.jsx";
 import TaskManagement from "./components/TaskManagement.jsx";
-import UserManagement from "./components/UserManagement";
+import UserManagement from "./components/UserManagment.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Register from "./pages/Rejister.jsx";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/leaves" element={<LeaveManagement />} />
+         <Route path="/register" element={<Register />} />
         <Route path="/tasks" element={<TaskManagement />} />
         <Route path="/users" element={<UserManagement />} />
         <Route

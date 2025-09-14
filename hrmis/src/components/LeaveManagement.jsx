@@ -1,108 +1,114 @@
-// src/components/LeaveManagement.js
+// src/components/LeaveManagement.jsx
 import { useEffect, useState } from "react";
-import API from "../api/axios";
+import API from "../api/axios"; // Your Axios instance with JWT
 import "./LeaveManagement.css";
 
 export default function LeaveManagement() {
   const [leaves, setLeaves] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Fetch all leaves (Admin only)
-  const fetchLeaves = async () => {
+  // Load leaves when component mounts
+  useEffect(() => {
+    loadLeaves();
+  }, []);
+
+  const loadLeaves = async () => {
     try {
-      setLoading(true);
-      const res = await API.get("/leaves");
+      const res = await API.get("/leaves"); // Axios automatically sends JWT
       setLeaves(res.data);
     } catch (err) {
-      console.error("Error fetching leaves:", err);
-    } finally {
-      setLoading(false);
+      setError(err.response?.data?.message || "Failed to fetch leaves");
     }
   };
 
-  // Update leave status
-  const updateLeave = async (id, status) => {
+  const handleApprove = async (id) => {
     try {
-      await API.put(`/leaves/${id}`, { status });
-      alert(`Leave ${status} successfully!`);
-      fetchLeaves();
+      await API.put(`/leaves/${id}`, { status: "Approved" });
+      loadLeaves(); // refresh table
     } catch (err) {
-      console.error("Error updating leave:", err);
-      alert("Failed to update leave.");
+      setError(err.response?.data?.message || "Failed to approve leave");
     }
   };
 
-  // Delete leave
-  const deleteLeave = async (id) => {
+  const handleReject = async (id) => {
+    try {
+      await API.put(`/leaves/${id}`, { status: "Rejected" });
+      loadLeaves(); // refresh table
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to reject leave");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this leave?")) return;
     try {
       await API.delete(`/leaves/${id}`);
-      alert("Leave deleted!");
-      fetchLeaves();
+      loadLeaves();
     } catch (err) {
-      console.error("Error deleting leave:", err);
-      alert("Failed to delete leave.");
+      setError(err.response?.data?.message || "Failed to delete leave");
     }
   };
-
-  useEffect(() => {
-    fetchLeaves();
-  }, []);
 
   return (
     <div className="leave-management">
       <h2>Leave Management</h2>
+      {error && <p className="error">{error}</p>}
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : leaves.length === 0 ? (
-        <p>No leave requests found.</p>
-      ) : (
-        <table className="leave-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Employee</th>
-              <th>Reason</th>
-              <th>Status</th>
-              <th>Dates</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaves.map((leave) => (
+      <table className="leave-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Requested By</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {leaves.length > 0 ? (
+            leaves.map((leave) => (
               <tr key={leave.id}>
                 <td>{leave.id}</td>
-                <td>{leave.requested_by_user?.name || "Unknown"}</td>
+                <td>{leave.requested_by_user?.name}</td>
+                <td>{leave.start_date}</td>
+                <td>{leave.end_date}</td>
                 <td>{leave.reason}</td>
                 <td>{leave.status}</td>
-                <td>
-                  {leave.start_date} → {leave.end_date}
-                </td>
-                <td>
+                <td className="action-buttons">
+                  {leave.status === "Pending" && (
+                    <>
+                      <button
+                        className="approve-btn"
+                        onClick={() => handleApprove(leave.id)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="reject-btn"
+                        onClick={() => handleReject(leave.id)}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
                   <button
-                    className="action-btn approve"
-                    onClick={() => updateLeave(leave.id, "Approved")}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="action-btn reject"
-                    onClick={() => updateLeave(leave.id, "Rejected")}
-                  >
-                    Reject
-                  </button>
-                  <button
-                    className="action-btn delete"
-                    onClick={() => deleteLeave(leave.id)}
+                    className="delete-btn"
+                    onClick={() => handleDelete(leave.id)}
                   >
                     Delete
                   </button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">No leaves found</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
