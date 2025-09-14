@@ -34,7 +34,6 @@ export default function Dashboard() {
           completedTasks,
           pendingTasks,
         });
-
         setProfile({ name: "Admin User" });
       } catch (err) {
         console.error("Dashboard data fetch error:", err);
