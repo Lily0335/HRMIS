@@ -8,7 +8,6 @@ export const fetchLeaves = async () => {
   }
 };
 
-// Create a new leave request
 export const createLeave = async (leaveData) => {
   try {
     const response = await API.post("/leaves", leaveData);
