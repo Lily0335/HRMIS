@@ -35,7 +35,6 @@ export default function Dashboard() {
           pendingTasks,
         });
 
-        // ✅ Example: Set profile if you have profile API
         setProfile({ name: "Admin User" });
       } catch (err) {
         console.error("Dashboard data fetch error:", err);
