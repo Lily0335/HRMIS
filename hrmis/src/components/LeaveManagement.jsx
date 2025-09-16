@@ -1,20 +1,19 @@
-// src/components/LeaveManagement.jsx
+
 import { useEffect, useState } from "react";
-import API from "../api/axios"; // Your Axios instance with JWT
+import API from "../api/axios"; 
 import "./LeaveManagement.css";
 
 export default function LeaveManagement() {
   const [leaves, setLeaves] = useState([]);
   const [error, setError] = useState("");
 
-  // Load leaves when component mounts
   useEffect(() => {
     loadLeaves();
   }, []);
 
   const loadLeaves = async () => {
     try {
-      const res = await API.get("/leaves"); // Axios automatically sends JWT
+      const res = await API.get("/leaves"); 
       setLeaves(res.data);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch leaves");
@@ -24,7 +23,7 @@ export default function LeaveManagement() {
   const handleApprove = async (id) => {
     try {
       await API.put(`/leaves/${id}`, { status: "Approved" });
-      loadLeaves(); // refresh table
+      loadLeaves();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to approve leave");
     }
@@ -33,7 +32,7 @@ export default function LeaveManagement() {
   const handleReject = async (id) => {
     try {
       await API.put(`/leaves/${id}`, { status: "Rejected" });
-      loadLeaves(); // refresh table
+      loadLeaves();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to reject leave");
     }

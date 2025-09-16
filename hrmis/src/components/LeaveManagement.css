@@ -1,6 +1,4 @@
-/* LeaveManagement.css */
 
-/* Page wrapper */
 .leave-management {
   max-width: 1000px;
   margin: 20px auto;
@@ -11,7 +9,6 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Headings */
 .leave-management h2 {
   text-align: center;
   color: #2c3e50;
@@ -25,7 +22,6 @@
   margin: 15px 0;
 }
 
-/* Form styles */
 .leave-form {
   display: flex;
   gap: 10px;
@@ -63,7 +59,6 @@
   background: #2980b9;
 }
 
-/* Table */
 .leave-table {
   width: 100%;
   border-collapse: collapse;
@@ -92,7 +87,6 @@
   background: #f1f7ff;
 }
 
-/* Action buttons */
 .action-btn {
   padding: 6px 12px;
   margin: 2px;
