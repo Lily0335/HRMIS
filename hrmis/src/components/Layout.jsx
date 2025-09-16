@@ -91,7 +91,6 @@ export default function Layout({ children }) {
     { icon: faUsers, label: "Employees", path: "/users" },
     { icon: faCalendar, label: "Leaves", path: "/leaves" },
     { icon: faClipboardList, label: "Tasks", path: "/tasks" },
-    { icon: faUsers, label: "Register User", path: "/register" },
   ];
 
   return (

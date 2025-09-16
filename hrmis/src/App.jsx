@@ -25,9 +25,7 @@ function App() {
         <Route
           path="/register"
           element={
-            <Layout>
               <Register />
-            </Layout>
           }
         />
         <Route
