@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState } from "react";
 import {
   fetchUsers,
@@ -8,8 +7,10 @@ import {
   updateUser,
   deleteUser,
   fetchUserByEmail,
+  fetchUserProfile,
 } from "../api/users";
 import "./UserManagement.css";
+
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
@@ -26,8 +27,12 @@ export default function UserManagement() {
   const [searchEmail, setSearchEmail] = useState("");
   const [searchResult, setSearchResult] = useState(null);
   const [error, setError] = useState("");
+  const [profile, setProfile] = useState(null);
+
+  // 🟢 Load users and profile on mount
   useEffect(() => {
     loadUsers();
+    loadProfile();
   }, []);
 
   const loadUsers = async () => {
@@ -35,8 +40,23 @@ export default function UserManagement() {
       const res = await fetchUsers();
       setUsers(res);
     } catch (err) {
-      setError(err.message || "Failed to fetch users");
+      handleApiError(err, "Failed to fetch users");
     }
+  };
+
+  const loadProfile = async () => {
+    try {
+      const res = await fetchUserProfile();
+      setProfile(res);
+    } catch (err) {
+      handleApiError(err, "Failed to fetch profile");
+    }
+  };
+
+  const handleApiError = (err, fallbackMessage) => {
+    if (err.response?.status === 401) setError("Unauthenticated. Please log in.");
+    else if (err.response?.status === 403) setError("Forbidden. You lack permission.");
+    else setError(err.message || fallbackMessage);
   };
 
   const handleInputChange = (e) => {
@@ -64,7 +84,7 @@ export default function UserManagement() {
       setEditingId(null);
       loadUsers();
     } catch (err) {
-      setError(err.message || "Failed to save user");
+      handleApiError(err, "Failed to save user");
     }
   };
 
@@ -77,7 +97,7 @@ export default function UserManagement() {
       });
       setEditingId(id);
     } catch (err) {
-      setError(err.message || "Failed to fetch user details");
+      handleApiError(err, "Failed to fetch user details");
     }
   };
 
@@ -87,7 +107,7 @@ export default function UserManagement() {
       await deleteUser(id);
       loadUsers();
     } catch (err) {
-      setError(err.message || "Failed to delete user");
+      handleApiError(err, "Failed to delete user");
     }
   };
 
@@ -96,7 +116,7 @@ export default function UserManagement() {
       const res = await fetchUserByEmail(searchEmail);
       setSearchResult(res);
     } catch (err) {
-      setError(err.message || "User not found");
+      handleApiError(err, "User not found");
     }
   };
 
@@ -105,6 +125,17 @@ export default function UserManagement() {
       <h2>User Management</h2>
       {error && <p className="error">{error}</p>}
 
+      {/* 🔷 Profile Section */}
+      {profile && (
+        <div className="profile-box">
+          <h3>Your Profile</h3>
+          <p><strong>Name:</strong> {profile.name}</p>
+          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Role:</strong> {profile.role}</p>
+        </div>
+      )}
+
+      {/* 🔍 Search by Email */}
       <div>
         <input
           type="email"
@@ -120,6 +151,7 @@ export default function UserManagement() {
         )}
       </div>
 
+      {/* ✏️ Create/Update Form */}
       <form onSubmit={handleSubmit}>
         <input
           name="name"
@@ -191,6 +223,7 @@ export default function UserManagement() {
       <table className="user-table">
         <thead>
           <tr>
+            <th>ID</th> {/* ✅ Added ID header */}
             <th>Name</th>
             <th>Email</th>
             <th>Department</th>
@@ -204,6 +237,7 @@ export default function UserManagement() {
           {users.length > 0 ? (
             users.map((user) => (
               <tr key={user.id}>
+                <td>{user.id}</td> {/* ✅ Displaying ID */}
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.department}</td>
@@ -218,7 +252,7 @@ export default function UserManagement() {
             ))
           ) : (
             <tr>
-              <td colSpan="7">No users found</td>
+              <td colSpan="8">No users found</td>
             </tr>
           )}
         </tbody>

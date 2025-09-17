@@ -1,7 +1,88 @@
 
+// // import { useEffect, useState } from "react";
+// // import Layout from "../components/Layout.jsx";
+// // import { fetchUsers } from "../api/users"; 
+// // import "./Dashboard.css";
+
+// // export default function Dashboard() {
+// //   const [profile, setProfile] = useState({ name: "Admin" });
+// //   const [stats, setStats] = useState({
+// //     totalEmployees: 0,
+// //     pendingLeaves: 0,
+// //     approvedLeaves: 0,
+// //     rejectedLeaves: 0,
+// //     completedTasks: 0,
+// //     pendingTasks: 0,
+// //   });
+
+// //   useEffect(() => {
+// //     const loadDashboardData = async () => {
+// //       try {
+// //         const users = await fetchUsers();
+
+// //         const pendingLeaves = 3;   
+// //         const approvedLeaves = 8;  
+// //         const rejectedLeaves = 1;  
+// //         const completedTasks = 12; 
+// //         const pendingTasks = 5;    
+
+// //         setStats({
+// //           totalEmployees: users.length,
+// //           pendingLeaves,
+// //           approvedLeaves,
+// //           rejectedLeaves,
+// //           completedTasks,
+// //           pendingTasks,
+// //         });
+// //         setProfile({ name: "Admin User" });
+// //       } catch (err) {
+// //         console.error("Dashboard data fetch error:", err);
+// //       }
+// //     };
+
+// //     loadDashboardData();
+// //   }, []);
+
+// //   return (
+// //     <Layout>
+// //       <div className="dashboard-top">
+// //         <h2>Hello, {profile.name || "Admin"}</h2>
+// //         <p>Welcome back! Here's an overview of your system.</p>
+// //       </div>
+
+// //       <div className="dashboard-cards">
+// //         <div className="dashboard-card">
+// //           <h3>Total Employees</h3>
+// //           <p>{stats.totalEmployees}</p>
+// //         </div>
+// //         <div className="dashboard-card">
+// //           <h3>Pending Leaves</h3>
+// //           <p>{stats.pendingLeaves}</p>
+// //         </div>
+// //         <div className="dashboard-card">
+// //           <h3>Approved Leaves</h3>
+// //           <p>{stats.approvedLeaves}</p>
+// //         </div>
+// //         <div className="dashboard-card">
+// //           <h3>Rejected Leaves</h3>
+// //           <p>{stats.rejectedLeaves}</p>
+// //         </div>
+// //         <div className="dashboard-card">
+// //           <h3>Completed Tasks</h3>
+// //           <p>{stats.completedTasks}</p>
+// //         </div>
+// //         <div className="dashboard-card">
+// //           <h3>Pending Tasks</h3>
+// //           <p>{stats.pendingTasks}</p>
+// //         </div>
+// //       </div>
+// //     </Layout>
+// //   );
+// // }
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout.jsx";
-import { fetchUsers } from "../api/users"; 
+import { fetchUsers } from "../api/users";
+import { getTasks } from "../api/tasks"; // ✅ Import to fetch tasks
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -13,18 +94,33 @@ export default function Dashboard() {
     rejectedLeaves: 0,
     completedTasks: 0,
     pendingTasks: 0,
+    inProgressTasks: 0,
   });
 
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
+        // Fetch users and tasks
         const users = await fetchUsers();
+        const tasks = await getTasks();
 
-        const pendingLeaves = 3;   
-        const approvedLeaves = 8;  
-        const rejectedLeaves = 1;  
-        const completedTasks = 12; 
-        const pendingTasks = 5;    
+        // ✅ Count tasks by status
+        const completedTasks = tasks.filter(
+          (task) => task.status.toLowerCase() === "completed"
+        ).length;
+
+        const pendingTasks = tasks.filter(
+          (task) => task.status.toLowerCase() === "pending"
+        ).length;
+
+        const inProgressTasks = tasks.filter(
+          (task) => task.status.toLowerCase() === "in progress"
+        ).length;
+
+        // ✅ Replace with real leaves data if available
+        const pendingLeaves = 3;
+        const approvedLeaves = 8;
+        const rejectedLeaves = 1;
 
         setStats({
           totalEmployees: users.length,
@@ -33,6 +129,7 @@ export default function Dashboard() {
           rejectedLeaves,
           completedTasks,
           pendingTasks,
+          inProgressTasks,
         });
         setProfile({ name: "Admin User" });
       } catch (err) {
@@ -51,29 +148,33 @@ export default function Dashboard() {
       </div>
 
       <div className="dashboard-cards">
-        <div className="dashboard-card">
+        <div className="dashboard-card total-employees">
           <h3>Total Employees</h3>
           <p>{stats.totalEmployees}</p>
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card pending-leaves">
           <h3>Pending Leaves</h3>
           <p>{stats.pendingLeaves}</p>
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card approved-leaves">
           <h3>Approved Leaves</h3>
           <p>{stats.approvedLeaves}</p>
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card rejected-leaves">
           <h3>Rejected Leaves</h3>
           <p>{stats.rejectedLeaves}</p>
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card completed-tasks">
           <h3>Completed Tasks</h3>
           <p>{stats.completedTasks}</p>
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card pending-tasks">
           <h3>Pending Tasks</h3>
           <p>{stats.pendingTasks}</p>
+        </div>
+        <div className="dashboard-card inprogress-tasks">
+          <h3>In Progress</h3>
+          <p>{stats.inProgressTasks}</p>
         </div>
       </div>
     </Layout>

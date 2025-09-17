@@ -1,65 +1,83 @@
+// import { useEffect, useState } from "react";
+// import {
+//   getTasks,
+//   getTaskById,
+//   createTask,
+//   updateTask,
+//   deleteTask,
+// } from "../api/tasks";
+// import "./TaskManagement.css"; // Link to the CSS file
 
-// import { useState, useEffect } from "react";
-// //import "./TaskManagement.css";
-
-// export default function TaskManagement() {
+// export default function Tasks() {
 //   const [tasks, setTasks] = useState([]);
+//   const [error, setError] = useState("");
+//   const [loading, setLoading] = useState(false);
+
 //   const [form, setForm] = useState({
+//     id: "",
 //     title: "",
 //     description: "",
-//     priority: "Medium",
-//     status: "Pending",
+//     priority: "",
+//     status: "",
 //     assigned_to: "",
 //   });
-//   const [selectedTask, setSelectedTask] = useState(null);
 
-//   // 🔹 Mock fetch (GET /tasks)
-//   useEffect(() => {
-//     const mockTasks = [
-//       {
-//         id: 1,
-//         title: "Complete project documentation",
-//         description: "Write documentation for the new feature",
-//         priority: "High",
-//         status: "In Progress",
-//         assigned_to: 1,
-//         assigned_to_user: { id: 1, name: "John Doe", email: "john@example.com" },
-//       },
-//       {
-//         id: 2,
-//         title: "Fix login bug",
-//         description: "Resolve issue with authentication flow",
-//         priority: "Medium",
-//         status: "Pending",
-//         assigned_to: 2,
-//         assigned_to_user: { id: 2, name: "Jane Smith", email: "jane@example.com" },
-//       },
-//     ];
-//     setTasks(mockTasks);
-//   }, []);
+//   const [searchId, setSearchId] = useState("");
 
-//   // 🔹 Create (POST /tasks)
-//   const handleCreate = () => {
-//     if (!form.title.trim()) return alert("Title is required");
-//     const newTask = {
-//       id: Date.now(),
-//       ...form,
-//       assigned_to_user: { id: form.assigned_to, name: "Mock User" },
-//     };
-//     setTasks([...tasks, newTask]);
-//     setForm({
-//       title: "",
-//       description: "",
-//       priority: "Medium",
-//       status: "Pending",
-//       assigned_to: "",
-//     });
+//   const fetchTasks = async () => {
+//     try {
+//       setLoading(true);
+//       const data = await getTasks();
+//       setTasks(data);
+//       setError("");
+//     } catch (err) {
+//       console.error(err);
+//       setError(err.response?.data?.message || "Failed to fetch tasks.");
+//     } finally {
+//       setLoading(false);
+//     }
 //   };
 
-//   // 🔹 Edit (GET /tasks/{id}) + Update (PUT /tasks/{id})
+//   useEffect(() => {
+//     fetchTasks();
+//   }, []);
+
+//   const handleSearch = async () => {
+//     if (!searchId) return fetchTasks();
+//     try {
+//       const task = await getTaskById(searchId);
+//       setTasks([task]);
+//       setError("");
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Task not found.");
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       if (form.id) {
+//         await updateTask(form.id, form);
+//       } else {
+//         await createTask(form);
+//       }
+//       setForm({
+//         id: "",
+//         title: "",
+//         description: "",
+//         priority: "",
+//         status: "",
+//         assigned_to: "",
+//       });
+//       fetchTasks();
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to save task.");
+//     }
+//   };
+
 //   const handleEdit = (task) => {
-//     setSelectedTask(task);
 //     setForm({
+//       id: task.id,
 //       title: task.title,
 //       description: task.description,
 //       priority: task.priority,
@@ -68,264 +86,362 @@
 //     });
 //   };
 
-//   const handleUpdate = () => {
-//     if (!selectedTask) return;
-//     const updated = tasks.map((t) =>
-//       t.id === selectedTask.id ? { ...selectedTask, ...form } : t
-//     );
-//     setTasks(updated);
-//     setSelectedTask(null);
-//     setForm({
-//       title: "",
-//       description: "",
-//       priority: "Medium",
-//       status: "Pending",
-//       assigned_to: "",
-//     });
-//   };
-
-//   // 🔹 Delete (DELETE /tasks/{id})
-//   const handleDelete = (id) => {
-//     if (window.confirm("Delete this task?")) {
-//       setTasks(tasks.filter((t) => t.id !== id));
+//   const handleDelete = async (id) => {
+//     if (!window.confirm("Are you sure you want to delete this task?")) return;
+//     try {
+//       await deleteTask(id);
+//       fetchTasks();
+//     } catch (err) {
+//       setError(err.response?.data?.message || "Failed to delete task.");
 //     }
 //   };
 
 //   return (
-//     <div className="task-management">
-//       <h2>Task Management (Mock Data)</h2>
+//     <div className="tasks-container">
+//       <h1 className="tasks-title">Task Management</h1>
 
-//       {/* Form */}
-//       <div className="task-form">
+//       {error && <div className="tasks-error">{error}</div>}
+
+//       <div className="tasks-search">
+//         <input
+//           type="text"
+//           placeholder="Search by ID"
+//           value={searchId}
+//           onChange={(e) => setSearchId(e.target.value)}
+//         />
+//         <button className="btn btn-primary" onClick={handleSearch}>
+//           Search
+//         </button>
+//         <button className="btn btn-secondary" onClick={fetchTasks}>
+//           Reset
+//         </button>
+//       </div>
+
+//       <form onSubmit={handleSubmit} className="task-form">
 //         <input
 //           type="text"
 //           placeholder="Title"
 //           value={form.title}
 //           onChange={(e) => setForm({ ...form, title: e.target.value })}
+//           required
 //         />
 //         <textarea
 //           placeholder="Description"
 //           value={form.description}
 //           onChange={(e) => setForm({ ...form, description: e.target.value })}
+//           required
 //         ></textarea>
-//         <select
+//         <input
+//           type="text"
+//           placeholder="Priority"
 //           value={form.priority}
 //           onChange={(e) => setForm({ ...form, priority: e.target.value })}
-//         >
-//           <option value="High">High</option>
-//           <option value="Medium">Medium</option>
-//           <option value="Low">Low</option>
-//         </select>
-//         <select
+//           required
+//         />
+//         <input
+//           type="text"
+//           placeholder="Status"
 //           value={form.status}
 //           onChange={(e) => setForm({ ...form, status: e.target.value })}
-//         >
-//           <option value="Pending">Pending</option>
-//           <option value="In Progress">In Progress</option>
-//           <option value="Completed">Completed</option>
-//         </select>
+//           required
+//         />
 //         <input
 //           type="number"
 //           placeholder="Assigned To (User ID)"
 //           value={form.assigned_to}
 //           onChange={(e) => setForm({ ...form, assigned_to: e.target.value })}
+//           required
 //         />
+//         <button type="submit" className="btn btn-success">
+//           {form.id ? "Update Task" : "Create Task"}
+//         </button>
+//       </form>
 
-//         {selectedTask ? (
-//           <button onClick={handleUpdate}>Update Task</button>
-//         ) : (
-//           <button onClick={handleCreate}>Add Task</button>
-//         )}
-//       </div>
-
-//       {/* Task List */}
-//       <ul className="task-list">
-//         {tasks.map((task) => (
-//           <li key={task.id}>
-//             <strong>{task.title}</strong> ({task.priority}) - {task.status}
-//             <br />
-//             <small>Assigned to: {task.assigned_to_user.name}</small>
-//             <div className="actions">
-//               <button onClick={() => handleEdit(task)}>Edit</button>
-//               <button onClick={() => handleDelete(task.id)}>Delete</button>
-//             </div>
-//           </li>
-//         ))}
-//       </ul>
+//       {loading ? (
+//         <p>Loading tasks...</p>
+//       ) : (
+//         <table className="tasks-table">
+//           <thead>
+//             <tr>
+//               <th>ID</th>
+//               <th>Title</th>
+//               <th>Priority</th>
+//               <th>Status</th>
+//               <th>Assigned User</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {tasks.length > 0 ? (
+//               tasks.map((task) => (
+//                 <tr key={task.id}>
+//                   <td>{task.id}</td>
+//                   <td>{task.title}</td>
+//                   <td>{task.priority}</td>
+//                   <td>{task.status}</td>
+//                   <td>{task.assigned_to_user?.name || "—"}</td>
+//                   <td className="action-buttons">
+//                     <button className="btn btn-edit" onClick={() => handleEdit(task)}>
+//                       Edit
+//                     </button>
+//                     <button
+//                       className="btn btn-delete"
+//                       onClick={() => handleDelete(task.id)}
+//                     >
+//                       Delete
+//                     </button>
+//                   </td>
+//                 </tr>
+//               ))
+//             ) : (
+//               <tr>
+//                 <td colSpan="6" className="no-tasks">
+//                   No tasks available.
+//                 </td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       )}
 //     </div>
 //   );
 // }
-import { useState, useEffect } from "react";
-import "./TaskManagement.css";
+import { useEffect, useState } from "react";
+import {
+  getTasks,
+  getTaskById,
+  createTask,
+  updateTask,
+  deleteTask,
+} from "../api/tasks";
+import "./TaskManagement.css"; // Link to your CSS file
 
-export default function TaskManagement() {
+export default function Tasks() {
   const [tasks, setTasks] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
+    id: "",
     title: "",
     description: "",
-    priority: "Medium",
-    status: "Pending",
+    priority: "",
+    status: "",
     assigned_to: "",
   });
-  const [selectedTask, setSelectedTask] = useState(null);
 
-  // 🔹 Mock fetch tasks
+  const [searchId, setSearchId] = useState("");
+
+  // Helper to format dates
+  const formatDate = (date) =>
+    date ? new Date(date).toLocaleString() : "—";
+
+  // Fetch all tasks
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const data = await getTasks();
+      setTasks(data);
+      setError("");
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Failed to fetch tasks.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const mockTasks = [
-      {
-        id: 1,
-        title: "Complete project documentation",
-        description: "Write documentation for the new feature",
-        priority: "High",
-        status: "In Progress",
-        assigned_to: 1,
-        assigned_to_user: { name: "John Doe" },
-      },
-      {
-        id: 2,
-        title: "Fix login bug",
-        description: "Resolve issue with authentication flow",
-        priority: "Medium",
-        status: "Pending",
-        assigned_to: 2,
-        assigned_to_user: { name: "Jane Smith" },
-      },
-    ];
-    setTasks(mockTasks);
+    fetchTasks();
   }, []);
 
-  // 🔹 Reset form
-  const resetForm = () => {
-    setForm({
-      title: "",
-      description: "",
-      priority: "Medium",
-      status: "Pending",
-      assigned_to: "",
-    });
-    setSelectedTask(null);
+  // Search task by ID
+  const handleSearch = async () => {
+    if (!searchId) return fetchTasks();
+    try {
+      const task = await getTaskById(searchId);
+      setTasks([task]);
+      setError("");
+    } catch (err) {
+      setError(err.response?.data?.message || "Task not found.");
+    }
   };
 
-  // 🔹 Create task
-  const handleCreate = () => {
-    if (!form.title.trim()) return alert("Title is required");
-    const newTask = {
-      id: Date.now(),
-      ...form,
-      assigned_to_user: { name: "Mock User" },
-    };
-    setTasks([...tasks, newTask]);
-    resetForm();
+  // Create or Update task
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (form.id) {
+        await updateTask(form.id, form);
+      } else {
+        await createTask(form);
+      }
+      setForm({
+        id: "",
+        title: "",
+        description: "",
+        priority: "",
+        status: "",
+        assigned_to: "",
+      });
+      fetchTasks();
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid data. Please check your input.");
+    }
   };
 
-  // 🔹 Start editing
+  // Fill form for editing
   const handleEdit = (task) => {
-    setSelectedTask(task);
     setForm({
+      id: task.id,
       title: task.title,
       description: task.description,
       priority: task.priority,
       status: task.status,
-      assigned_to: task.assigned_to,
+      assigned_to:
+        typeof task.assigned_to === "object"
+          ? task.assigned_to.id
+          : task.assigned_to,
     });
   };
 
-  // 🔹 Update task
-  const handleUpdate = () => {
-    if (!selectedTask) return;
-    const updated = tasks.map((t) =>
-      t.id === selectedTask.id ? { ...t, ...form } : t
-    );
-    setTasks(updated);
-    resetForm();
-  };
-
-  // 🔹 Delete task
-  const handleDelete = (id) => {
-    if (window.confirm("Delete this task?")) {
-      setTasks(tasks.filter((t) => t.id !== id));
+  // Delete task
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    try {
+      await deleteTask(id);
+      fetchTasks();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete task.");
     }
   };
 
   return (
-    <div className="task-management">
-      <h2>📋 Task Management</h2>
+    <div className="tasks-container">
+      <h1 className="tasks-title">Task Management</h1>
+
+      {error && <div className="tasks-error">{error}</div>}
+
+      {/* Search */}
+      <div className="tasks-search">
+        <input
+          type="text"
+          placeholder="Search by ID"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+        />
+        <button className="btn btn-primary" onClick={handleSearch}>
+          Search
+        </button>
+        <button className="btn btn-secondary" onClick={fetchTasks}>
+          Reset
+        </button>
+      </div>
 
       {/* Form */}
-      <div className="task-form">
+      <form onSubmit={handleSubmit} className="task-form">
         <input
           type="text"
           placeholder="Title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
+          required
         />
         <textarea
           placeholder="Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
+          required
         ></textarea>
-        <select
+        <input
+          type="text"
+          placeholder="Priority"
           value={form.priority}
           onChange={(e) => setForm({ ...form, priority: e.target.value })}
-        >
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
-        <select
+          required
+        />
+        <input
+          type="text"
+          placeholder="Status"
           value={form.status}
           onChange={(e) => setForm({ ...form, status: e.target.value })}
-        >
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-        </select>
+          required
+        />
         <input
           type="number"
           placeholder="Assigned To (User ID)"
           value={form.assigned_to}
-          onChange={(e) => setForm({ ...form, assigned_to: e.target.value })}
+          onChange={(e) =>
+            setForm({ ...form, assigned_to: e.target.value })
+          }
+          required
         />
+        <button type="submit" className="btn btn-success">
+          {form.id ? "Update Task" : "Create Task"}
+        </button>
+      </form>
 
-        <div className="form-buttons">
-          {selectedTask ? (
-            <>
-              <button className="update" onClick={handleUpdate}>
-                ✅ Update
-              </button>
-              <button className="cancel" onClick={resetForm}>
-                ❌ Cancel
-              </button>
-            </>
-          ) : (
-            <button className="add" onClick={handleCreate}>
-              ➕ Add Task
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Task List */}
-      <ul className="task-list">
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <div className="task-header">
-              <strong>{task.title}</strong>
-              <span className={`priority ${task.priority.toLowerCase()}`}>
-                {task.priority}
-              </span>
-            </div>
-            <p>{task.description}</p>
-            <small>Status: {task.status}</small>
-            <br />
-            <small>Assigned to: {task.assigned_to_user.name}</small>
-            <div className="actions">
-              <button onClick={() => handleEdit(task)}>✏ Edit</button>
-              <button onClick={() => handleDelete(task.id)}>🗑 Delete</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {/* Table */}
+      {loading ? (
+        <p>Loading tasks...</p>
+      ) : (
+        <table className="tasks-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Assigned User</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <tr key={task.id}>
+                  <td>{task.id}</td>
+                  <td>{task.title}</td>
+                  <td>{task.description}</td>
+                  <td>{task.priority}</td>
+                  <td>{task.status}</td>
+                  <td>
+                    {typeof task.assigned_to === "object"
+                      ? task.assigned_to.name ||
+                        `User ID: ${task.assigned_to.id}`
+                      : `User ID: ${task.assigned_to}`}
+                  </td>
+                  <td>{formatDate(task.created_at)}</td>
+                  <td>{formatDate(task.updated_at)}</td>
+                  <td className="action-buttons">
+                    <button
+                      className="btn btn-edit"
+                      onClick={() => handleEdit(task)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-delete"
+                      onClick={() => handleDelete(task.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="9" className="no-tasks">
+                  No tasks available.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
