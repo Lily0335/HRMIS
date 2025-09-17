@@ -29,7 +29,6 @@ export default function UserManagement() {
   const [error, setError] = useState("");
   const [profile, setProfile] = useState(null);
 
-  // 🟢 Load users and profile on mount
   useEffect(() => {
     loadUsers();
     loadProfile();
@@ -125,7 +124,6 @@ export default function UserManagement() {
       <h2>User Management</h2>
       {error && <p className="error">{error}</p>}
 
-      {/* 🔷 Profile Section */}
       {profile && (
         <div className="profile-box">
           <h3>Your Profile</h3>
@@ -134,8 +132,6 @@ export default function UserManagement() {
           <p><strong>Role:</strong> {profile.role}</p>
         </div>
       )}
-
-      {/* 🔍 Search by Email */}
       <div>
         <input
           type="email"
@@ -150,8 +146,6 @@ export default function UserManagement() {
           </div>
         )}
       </div>
-
-      {/* ✏️ Create/Update Form */}
       <form onSubmit={handleSubmit}>
         <input
           name="name"
@@ -219,11 +213,10 @@ export default function UserManagement() {
         <button type="submit">{editingId ? "Update" : "Create"} User</button>
       </form>
 
-      {/* 📋 Users Table */}
       <table className="user-table">
         <thead>
           <tr>
-            <th>ID</th> {/* ✅ Added ID header */}
+            <th>ID</th>
             <th>Name</th>
             <th>Email</th>
             <th>Department</th>
@@ -237,7 +230,7 @@ export default function UserManagement() {
           {users.length > 0 ? (
             users.map((user) => (
               <tr key={user.id}>
-                <td>{user.id}</td> {/* ✅ Displaying ID */}
+                <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.department}</td>
