@@ -1,4 +1,4 @@
-/* 🌟 User Management Container */
+
 .user-management {
   max-width: 1200px;
   margin: 2rem auto;
@@ -10,7 +10,6 @@
   color: #333;
 }
 
-/* 🔖 Heading */
 .user-management h2 {
   font-size: 2rem;
   text-align: center;
@@ -20,7 +19,6 @@
   letter-spacing: 0.5px;
 }
 
-/* 📦 Profile Boxes */
 .profile-box {
   background: #f9fbff;
   border-left: 5px solid #1f4e79;
@@ -34,7 +32,6 @@
   font-weight: 600;
 }
 
-/* ⚠️ Error */
 .error {
   color: #d9534f;
   text-align: center;
@@ -42,7 +39,6 @@
   font-weight: 500;
 }
 
-/* 🔍 Search Section */
 .user-management input[type="email"] {
   padding: 0.55rem 0.8rem;
   border: 1px solid #ccc;
@@ -70,7 +66,6 @@
   transform: translateY(-2px);
 }
 
-/* 📝 Form */
 .user-management form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -101,7 +96,6 @@
   background-color: #16375a;
 }
 
-/* 📋 Table */
 .user-table {
   width: 100%;
   border-collapse: collapse;
@@ -124,7 +118,6 @@
   background-color: #f9fbff;
 }
 
-/* ✏️ Action Buttons */
 .edit-btn,
 .delete-btn {
   padding: 0.45rem 1rem;
@@ -155,7 +148,6 @@
   transform: scale(1.05);
 }
 
-/* 📱 Responsive Design */
 @media (max-width: 768px) {
   .user-management {
     padding: 1.5rem;
